@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+      "target": "es2016",
+      "module": "commonjs",
+      "baseUrl": "./",
+      "paths": {
+        "*": ["node_modules/*"]
+      },
+      "outDir": "./build",
+      "rootDir": "./", // Set this to where your TypeScript files start, like "./src" if you have a source folder
+      "esModuleInterop": true,
+      "forceConsistentCasingInFileNames": true,
+      "strict": true,
+      "skipLibCheck": true,
+      "resolveJsonModule": true,           // Enable importing .json files
+      "declaration": true,                 // Generate .d.ts files
+      "sourceMap": true,                    // Enable source maps
+
+
+  }
+}
