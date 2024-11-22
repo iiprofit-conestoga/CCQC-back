@@ -6,7 +6,7 @@
   // Import dotenv library so we can access env file information.
   import dotenv from "dotenv";
 
-  // Dynamically load the appropriate .env file
+  // Dynamically load the appropriate .env file.
 // const envFile = process.env.NODE_ENV === "development" ? ".env.development" : ".env.local";
 dotenv.config({ path: '.env.development'});
 
