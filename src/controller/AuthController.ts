@@ -78,7 +78,7 @@ const userLogin = async (
                         true,
                         httpStatus.OK,
                         "User authenticated",
-                        accessToken
+                        { accessToken, username: user.username, role: user.role_id }
                     );
 
                     return res.status(code)
