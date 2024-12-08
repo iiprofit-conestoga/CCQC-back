@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${Server_PORT}:${Server_PORT}" # Exposes the port specified in .env.development
+    env_file:
+      - .env.development # Loads environment variables
+    volumes:
+      - .:/usr/src/app # Mounts your project directory to the container (useful for development)
+      - /usr/src/app/node_modules # Avoids overwriting node_modules with empty volume
+    command: npm run dev # Runs the development server
+    depends_on:
+      - db
+    restart: always # Ensures the container restarts on failure
+
+  db:
+    image: postgres:14
+    container_name: dev_postgres
+    ports:
+      - "${POSTGRESS_PORT}:${POSTGRESS_PORT}" # Maps Postgres port from .env.development
+    environment:
+      POSTGRES_USER: ${POSTGRESS_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRESS_PASSWORD}
+      POSTGRES_DB: ${POSTGRESS_DB}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always # Ensures the database container restarts on failure
+
+volumes:
+  pgdata: # Volume to persist database data

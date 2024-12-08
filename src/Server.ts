@@ -17,6 +17,16 @@ const app = express();
 var corsOptions = {
   origin: "http://localhost:5173"
 };
+
+// const corsOptions = {
+//   origin: [
+//     "http://localhost:5173", // Allow local development
+//     "http://185.239.208.33:5173", // Allow requests from front-end hosted on the server
+//   ],
+//   credentials: true, // If using cookies or other credentials
+// };
+
+
 app.use(cors(corsOptions));
 app.use(compression());
 app.use(express.json());

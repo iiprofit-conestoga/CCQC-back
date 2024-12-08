@@ -1,13 +1,12 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
-name: Node.js CI
+name: Node.js CI & CD
 
 on:
   push:
-    branches: [ "development" ]
+    branches: 
+      - "development"  # Trigger on push to the development branch
   pull_request:
-    branches: [ "development" ]
+    branches: 
+      - "development"  # Trigger on PRs to the development branch
 
 jobs:
   build:
@@ -16,8 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        node-version: [22.x]  # Testing across multiple Node.js versions
 
     steps:
     - uses: actions/checkout@v4
@@ -26,5 +24,41 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm ci
-    - run: npm run build2 --if-present
+    - run: npm ci  # Install dependencies
+    - run: npm run build2 --if-present  # Build the project if a build script is present
+
+  deploy:
+    needs: build  # Ensure the deployment only runs after the build job finishes successfully
+    runs-on: ubuntu-latest
+    environment:
+      name: development  # Specifies the environment name (can be staging/production as well)
+
+    steps:
+    - uses: actions/checkout@v4  # Ensure latest code is checked out for deployment
+    - name: Set up SSH key for server access
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH key for the server
+
+    - name: Copy project files to server
+      run: |
+        scp -r ./* user_iiprofit@185.239.208.33:/home/user_iiprofit/ccqc_back_dev
+        # Make sure you update the path if necessary
+
+    - name: Deploy with Docker Compose
+      run: |
+        ssh user_iiprofit@185.239.208.33 << 'EOF'
+        cd /home/user_iiprofit/ccqc_back_dev  # Change to your project directory
+        # Ensure environment variables are set
+        echo "POSTGRESS_USERNAME=${{ secrets.POSTGRESS_USERNAME }}" > .env.development
+        echo "POSTGRESS_PASSWORD=${{ secrets.POSTGRESS_PASSWORD }}" >> .env.development
+        echo "POSTGRESS_DB=${{ secrets.POSTGRESS_DB }}" >> .env.development
+        echo "POSTGRESS_HOST=${{ secrets.POSTGRESS_HOST }}" >> .env.development
+        echo "POSTGRESS_PORT=${{ secrets.POSTGRESS_PORT }}" >> .env.development
+        echo "SERVER_PORT=${{ secrets.SERVER_PORT }}" >> .env.development
+        echo "SALT_ROUNDS=${{ secrets.SALT_ROUNDS }}" >> .env.development
+        echo "REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}" >> .env.development
+        echo "ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET }}" >> .env.development
+        docker-compose down  # Stop and remove containers if running
+        docker-compose up -d --build  # Build and restart the app with Docker Compose
+        EOF
