@@ -48,10 +48,10 @@ export default (permissionToCheck: number) => {
             // Transform permissions into an array of IDs
             const permissionList = permissions.map((perm: any) => perm.permission_id);
             console.log(permissionList);
-
+            console.log(permissionToCheck);
             // Check if the required permission exists
             const isPermitted = permissionList.includes(permissionToCheck);
-
+            console.log(isPermitted)
             if (isPermitted) {
                 next(); // Permission granted, proceed to the next middleware
             } else {

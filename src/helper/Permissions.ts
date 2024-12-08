@@ -2,9 +2,9 @@ export default {
     
     Add_Single_User: 1,
     Read_All_User: 3,
-    Read_Single_User: 526,
-    Edit_Single_User: 4,
-    Delete_Single_User: 5,
+    Read_Single_User: 51,
+    Edit_Single_User: 5,
+    Delete_Single_User: 52,
     Add_Single_Brand: 6,
     Read_All_Brand: 7,
     Read_Single_Brand: 8,

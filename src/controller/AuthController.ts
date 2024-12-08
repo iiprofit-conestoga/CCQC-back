@@ -51,6 +51,7 @@ const userLogin = async (
 
             // Check if the user exists
             if (user) {
+                console.log(user);
                 // Compare the provided password with the hashed password in the database
                 const passwordMatch = await bcrypt.compare(password, user.passwordHash as string);
 
@@ -78,7 +79,7 @@ const userLogin = async (
                         true,
                         httpStatus.OK,
                         "User authenticated",
-                        { accessToken, username: user.username, role: user.role_id }
+                        { accessToken, username: user.username, role: user.role_id , id : user.userinfo }
                     );
 
                     return res.status(code)
